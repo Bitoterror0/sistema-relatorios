@@ -5,29 +5,105 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Relatórios</title>
     <style>
-        /* Remove todas as bordas e margens da página */
+        /* Estilos básicos para o layout escuro combinado */
         html, body {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
-            overflow: hidden;
-            background-color: #000000; /* Combina com o tema escuro */
+            background-color: #121212;
+            color: #ffffff;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-        /* Força o sistema da Lovable a ocupar 100% da tela de forma invisível */
-        iframe {
+        .container {
+            width: 90%;
+            max-width: 500px;
+            padding: 20px;
+            background-color: #1e1e1e;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        input, textarea, button {
             width: 100%;
-            height: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            border: 1px solid #333;
+            background-color: #2a2a2a;
+            color: #fff;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #3ecf8e; /* Cor padrão do Supabase */
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
             border: none;
-            margin: 0;
-            padding: 0;
-            display: block;
+        }
+        button:hover {
+            background-color: #34b279;
         }
     </style>
 </head>
 <body>
 
-    <iframe src="https://relatoriotesteeusanta.lovable.app" title="Sistema de Relatórios"></iframe>
+    <div class="container">
+        <h2>Criar Novo Relatório</h2>
+        <!-- Formulário Real do Sistema -->
+        <form id="formRelatorio">
+            <label for="titulo">Título do Relatório:</label>
+            <input type="text" id="titulo" placeholder="Ex: Erro na query do banco" required>
+
+            <label for="conteudo">Conteúdo:</label>
+            <textarea id="conteudo" rows="6" placeholder="Digite os detalhes do relatório..." required></textarea>
+
+            <button type="submit">Salvar no Banco</button>
+        </form>
+    </div>
+
+    <!-- 1. IMPORTAÇÃO DO CLIENTE DO SUPABASE VIA CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <script>
+        // 2. CREDENCIAIS REAIS DO SEU PROJETO (Baseado na imagem image_823100.png)
+        // Montamos a URL usando o seu Project ID da imagem
+        const SUPABASE_URL = "https://beknuicutbmscnmktttm.supabase.co"; 
+        
+        // ATENÇÃO: Substitua o texto abaixo pela chave real que você vai pegar na aba API do painel
+        const SUPABASE_ANON_KEY = "COLE_AQUI_A_SUA_CHAVE_ANON_PUBLIC";
+
+        // Inicializa o cliente de conexão do Supabase
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // 3. CAPTURA DOS DADOS E ENVIO PARA O POSTGRESQL
+        const form = document.getElementById('formRelatorio');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Impede a página de atualizar ao enviar
+
+            const tituloRelatorio = document.getElementById('titulo').value;
+            const conteudoRelatorio = document.getElementById('conteudo').value;
+
+            // Insere os dados diretamente na tabela 'relatorios' criada no Supabase
+            const { data, error } = await supabase
+                .from('relatorios')
+                .insert([
+                    { titulo: tituloRelatorio, conteudo: conteudoRelatorio }
+                ]);
+
+            if (error) {
+                console.error("Erro retornado do Supabase:", error);
+                alert("Erro ao salvar! Dê uma olhada no console do navegador (F12).");
+            } else {
+                alert("Relatório gravado com sucesso no PostgreSQL do Supabase!");
+                form.reset(); // Limpa os campos do formulário
+            }
+        });
+    </script>
 
 </body>
 </html>
