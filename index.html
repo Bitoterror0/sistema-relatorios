@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Relatórios</title>
     <style>
-        /* Estilos básicos para o layout escuro combinado */
+        /* Layout escuro moderno e responsivo */
         html, body {
             margin: 0;
             padding: 0;
@@ -21,28 +21,45 @@
         .container {
             width: 90%;
             max-width: 500px;
-            padding: 20px;
+            padding: 25px;
             background-color: #1e1e1e;
             border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        }
+        h2 {
+            margin-top: 0;
+            color: #3ecf8e; /* Verde padrão do Supabase */
+            text-align: center;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 15px;
+            font-size: 14px;
         }
         input, textarea, button {
             width: 100%;
-            padding: 10px;
-            margin-top: 10px;
-            margin-bottom: 10px;
-            border-radius: 4px;
+            padding: 12px;
+            margin-top: 5px;
+            border-radius: 6px;
             border: 1px solid #333;
             background-color: #2a2a2a;
             color: #fff;
             box-sizing: border-box;
+            font-size: 16px;
+        }
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #3ecf8e;
         }
         button {
-            background-color: #3ecf8e; /* Cor padrão do Supabase */
+            background-color: #3ecf8e;
             color: #000;
             font-weight: bold;
             cursor: pointer;
             border: none;
+            margin-top: 20px;
+            transition: background 0.2s;
         }
         button:hover {
             background-color: #34b279;
@@ -53,7 +70,7 @@
 
     <div class="container">
         <h2>Criar Novo Relatório</h2>
-        <!-- Formulário Real do Sistema -->
+        
         <form id="formRelatorio">
             <label for="titulo">Título do Relatório:</label>
             <input type="text" id="titulo" placeholder="Ex: Erro na query do banco" required>
@@ -65,30 +82,26 @@
         </form>
     </div>
 
-    <!-- 1. IMPORTAÇÃO DO CLIENTE DO SUPABASE VIA CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <script>
-        // 2. CREDENCIAIS REAIS DO SEU PROJETO (Baseado na imagem image_823100.png)
-        // Montamos a URL usando o seu Project ID da imagem
+        // 2. CREDENCIAIS DO SEU PROJETO JÁ CONFIGURADAS
         const SUPABASE_URL = "https://beknuicutbmscnmktttm.supabase.co"; 
-        
-        // ATENÇÃO: Substitua o texto abaixo pela chave real que você vai pegar na aba API do painel
-        const SUPABASE_ANON_KEY = "COLE_AQUI_A_SUA_CHAVE_ANON_PUBLIC";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJla251aWN1dGJtc2NubWt0dHRtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzk5MTE1NTQsImV4cCI6MjA5NTQ4NzU1NH0.Err7W-urtW-vrQCXn7QWhqmfV1slDGK3QX20ZlLpzmI";
 
         // Inicializa o cliente de conexão do Supabase
         const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // 3. CAPTURA DOS DADOS E ENVIO PARA O POSTGRESQL
+        // 3. LÓGICA DO FORMULÁRIO
         const form = document.getElementById('formRelatorio');
 
         form.addEventListener('submit', async (e) => {
-            e.preventDefault(); // Impede a página de atualizar ao enviar
+            e.preventDefault(); // Impede a página de recarregar ao enviar
 
             const tituloRelatorio = document.getElementById('titulo').value;
             const conteudoRelatorio = document.getElementById('conteudo').value;
 
-            // Insere os dados diretamente na tabela 'relatorios' criada no Supabase
+            // Insere os dados diretamente na tabela 'relatorios' do seu banco
             const { data, error } = await supabase
                 .from('relatorios')
                 .insert([
@@ -100,7 +113,7 @@
                 alert("Erro ao salvar! Dê uma olhada no console do navegador (F12).");
             } else {
                 alert("Relatório gravado com sucesso no PostgreSQL do Supabase!");
-                form.reset(); // Limpa os campos do formulário
+                form.reset(); // Limpa os campos do formulário para o próximo envio
             }
         });
     </script>
